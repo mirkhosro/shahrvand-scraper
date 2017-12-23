@@ -12,19 +12,20 @@ logging.basicConfig(#filename = "log.txt",
 logger = logging.getLogger(__name__)
 
 
-# start scraping
 ## load the page
-logger.info("App started.")
-page_url = "http://www.shahrvand.ir/fa/product/cat/1.html"
-try:
-    logger.info("Downloading page...")
-    html_doc = requests.get(page_url).text
-    # with open("brands.html") as f:
-    #     html_doc = f.read()
-    logger.info("Page downloaded.")
-except RequestException as ex:
-    logger.error(ex)
+logger.info(f"{__name__} started.")
+
+if len(sys.argv) < 2:
+    print("Input file path is required as the first argument.")
     sys.exit(1)
+elif len(sys.argv) < 3:
+    print("Output file path is required as the second argument.")
+    sys.exit(1)
+
+input_file_path = sys.argv[1]
+output_file_path = sys.argv[2]
+with open(input_file_path) as f:
+    html_doc = f.read()
 
 ## setup Beautiful Soup
 logger.info("Parsing page...")
@@ -32,7 +33,7 @@ soup = BeautifulSoup(html_doc, "html.parser")
 
 ## setup output file
 try:
-    csvfile = open("../data/shahrvand_brands.csv", "w", newline = "")
+    csvfile = open(output_file_path, "w", newline = "")
     csv_writer = csv.writer(csvfile)
     csv_writer.writerow(["title", "sh_id"])
 except Exception as e:

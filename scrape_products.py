@@ -9,7 +9,7 @@ import time
 
 zwnj_ptrn = re.compile("\u200c+")
 white_ptrn = re.compile("[\u200c\u200f ]+")
-size_ptrn = re.compile("\d+([\.،]\d+)? (گرمی|عددی|میلی لیتری|کیلویی|عدد) ")
+size_ptrn = re.compile("\d+([\.،]\d+)? (گرمی|عددی|میلی لیتری|کیلویی|عدد|رول|برگ|میلی|سانتی متری) ")
 
 # set up logging
 logging.basicConfig(#filename = "log.txt",
@@ -93,15 +93,28 @@ def get_image_file_name(tag):
 
 def get_keywords(title, brand):
     filtered = title
-    filtered = re.sub(" (ها|ای|با|و|در|شده) ", " ", filtered)
-    filtered = re.sub("\d+((\.|،)\d+)? \w+ ", "", filtered)
+    ## remove these words
+    filtered = re.sub(" (ها|ای|با|و|در|شده|های|کننده|دهنده|حاوی|دارای|کن) ", " ", filtered)
+    ## removed quanitities
+    filtered = re.sub("\d+([\.،]\d+)? \w+ ", "", filtered)
+    ## remove numbers
+    filtered = re.sub("\d+([\.،]\d+)?", "", filtered)
+    ## remove symobs
+    filtered = re.sub("[-()*+]", "", filtered)
+    ## remove brand (to be replaced later)
     filtered = filtered.replace(brand, "").strip()
-    keywords = filtered.split(" ")
-    keywords.append(brand)
+    all_keywords = filtered.split(" ")
+    all_keywords.append(brand)
+    ## use only the the first and last words as keywords
+    keywords = all_keywords[0:2]
+    if len(all_keywords) > 3:
+        keywords.append(all_keywords[-2])
+    if len(all_keywords) > 2:
+        keywords.append(all_keywords[-1])
     return keywords
 
 
-def augment_keywords(keywords):
+def augment_keywords_old(keywords):
     """Augment keywords to generate all possible combinations."""
     stack = []
     full_kw = []
@@ -115,6 +128,24 @@ def augment_keywords(keywords):
 
     gen_for(len(keywords) - 1)
     return("-".join(full_kw))
+
+def augment_keywords(keywords):
+    """Augment keywords to generate all possible combinations."""
+    ## brand is always one keyword
+    full_kw = [keywords[-1]]
+    ## stack dynamically changes
+    stack = [keywords[0]]
+    def gen_for(k : int):
+        stack.insert(1, keywords[k])
+        full_kw.append(" ".join(stack))
+        if (k > 1):
+            for i in reversed(range(1, k)):
+                gen_for(i)
+        stack.pop(1)
+
+    gen_for(len(keywords) - 1)
+    return("-".join(full_kw))
+
 
 if len(sys.argv) < 2:
     print("Input file path is required as the first argument.")
@@ -141,22 +172,6 @@ if brands_file_path is not None:
         for row in csv_r:
             all_brands.add(normalize_text(row[title_index]))
 
-# infile = open(html_file_path, newline = "")
-# outfile = open(output_file_path, "w", newline = "")
-# csv_r = csv.reader(infile)
-# csv_w = csv.writer(outfile)
-# csv_w.writerow(next(csv_r))
-# for row in csv_r:
-#     fixed = fix_brand(normalize_text(row[3]), all_brands)
-#     if fixed is None:
-#         print(f"Couldn't fix {row[3]}")
-#     else:
-#         row[3] = fixed
-#     csv_w.writerow(row)
-# infile.close()
-# outfile.close()
-# sys.exit(0)
-    
 
 logger.info("Loading files...")
 ## load the page or html file
