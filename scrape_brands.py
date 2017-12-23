@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 ## load the page
-logger.info(f"{__name__} started.")
+logger.info(f"{sys.argv[0]} started.")
 
 if len(sys.argv) < 2:
     print("Input file path is required as the first argument.")

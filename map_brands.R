@@ -1,9 +1,9 @@
 library(tidyverse)
-foods <- read.csv("data/all_foods.csv", strip.white = TRUE, stringsAsFactors = FALSE)
-sh_brands <- foods %>% select(brand) %>% unique %>% arrange(brand)
-supraano_brands <- read.csv("data/supraano_db_brands.csv", strip.white = TRUE,
+prods <- read.csv("../data/cleaning.csv", strip.white = TRUE, stringsAsFactors = FALSE)
+sh_brands <- prods %>% select(brand) %>% unique %>% arrange(brand)
+supraano_brands <- read.csv("../data/supraano_db_brands.csv", strip.white = TRUE,
                             colClasses = "character") %>% filter(status == 1)
-#sh_only_brands <- tibble(brand = setdiff(sh_brands$brand, supraano_brands$name))
+sh_only_brands <- tibble(brand = setdiff(sh_brands$brand, supraano_brands$name))
 #write_csv(sh_only_brands, "data/only_shahrvand.csv")
 brand_map <- read.csv("data/brand_map.csv", strip.white = TRUE, colClasses = "character") 
 ## check for duplicate brands
