@@ -1,5 +1,5 @@
 library(tidyverse)
-prods <- read.csv("../data/cleaning.csv", strip.white = TRUE, stringsAsFactors = FALSE)
+prods <- read.csv("../data/stationery.csv", strip.white = TRUE, stringsAsFactors = FALSE)
 sh_brands <- prods %>% select(brand) %>% unique %>% arrange(brand)
 supraano_brands <- read.csv("../data/supraano_db_brands.csv", strip.white = TRUE,
                             colClasses = "character") %>% filter(status == 1)
