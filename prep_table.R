@@ -24,8 +24,8 @@ prods$brand_id <- left_join(prods["brand"], brand_map, by = c("brand" = "shahrva
 categ <- left_join(prods, supraano_cat[c("id", "name")],
                                by = c("sub_categ" = "name"))
 null_id <- categ[is.na(categ$id), ]# %>% select(sub_categ) %>% unique
+any(is.na(categ$id))
 prods$category_id <- categ$id
-
 prods <- prods %>% select(-c(raw_title, brand, current_price, weight_g, volume_ml, categ, sub_categ))
 this_time = as.character(lubridate::now())
 prods$created_at <- this_time

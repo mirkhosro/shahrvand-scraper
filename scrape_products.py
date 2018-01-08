@@ -10,7 +10,7 @@ from pathlib import Path
 
 zwnj_ptrn = re.compile("\u200c+")
 white_ptrn = re.compile("[\u200c\u200f ]+")
-size_ptrn = re.compile("\d+([\.،]\d+)? (گرمی|عددی|میلی لیتری|کیلویی|عدد|رول|برگ|میلی|سانتی متری) ")
+size_ptrn = re.compile("\d+([\.،]\d+)? (گرمی|عددی|میلی لیتری|کیلویی|لیتری|عدد|رول|برگ|میلی|سانتی متری) ")
 
 # set up logging
 logging.basicConfig(#filename = "log.txt",

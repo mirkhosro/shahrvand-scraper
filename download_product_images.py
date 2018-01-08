@@ -15,7 +15,7 @@ def download_to_folder(row: list, output_folder: Path):
     if saved_file_path.exists():
         logger.info(f"File {saved_file_path} already exists. Skipping.")
     else:
-        time.sleep(3)
+        time.sleep(2)
         r = requests.get(image_url)
         r.raise_for_status()
         with saved_file_path.open("wb") as f:
