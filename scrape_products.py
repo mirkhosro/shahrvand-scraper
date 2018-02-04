@@ -210,7 +210,7 @@ else:
 ## determine if a folder is given for input or a file
 input_file_path = Path(sys.argv[1])
 if input_file_path.is_dir():
-    html_file_list = input_file_path.glob("*.html")
+    html_file_list = [*input_file_path.glob("*.html"), *input_file_path.glob("*.htm")]
 if input_file_path.is_file():
     html_file_list = [input_file_path]
 
@@ -248,7 +248,7 @@ for file_path in html_file_list:
         ## setup Beautiful Soup
         logger.info(f"Parsing HTML page {file_path.name}")
         soup = BeautifulSoup(html_doc, "html.parser")
-        logger.info("Processing data...")
+        #logger.info("Processing data...")
         row_dict = parsePage(soup, csv_writer)
     
 csvfile.close()
