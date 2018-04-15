@@ -7,6 +7,9 @@ import logging
 
 logging.basicConfig(level = logging.DEBUG, format = "%(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+warn_handler = logging.FileHandler("update_warnings.log")
+warn_handler.setLevel(logging.WARNING)
+logger.addHandler(warn_handler)
 
 
 if len(sys.argv) < 2:
@@ -17,7 +20,9 @@ input_file = sys.argv[1]
 csv_fields = ["shahrvand_id", "raw_title", "title", "brand", "orig_price", "current_price",
           "weight_g", "volume_ml", "image_file", "keywords"]
 csv_r = csv.DictReader(open(input_file, newline = ""), fieldnames = csv_fields)
-next(csv_r)  # skip the header
+csv_new_prod = csv.DictWriter(open("new_products.csv", "w", newline = ""), fieldnames = csv_fields)
+header = next(csv_r)  # skip the header
+csv_new_prod.writerow(header)
 
 try:
     cnx = mysql.connector.connect(option_files = "sql_conf.cnf")
@@ -39,6 +44,7 @@ try:
             result = cursor.fetchall()
             if cursor.rowcount == 0:
                 logger.warning(f"The id {sh_id} was not found in DB. Is it a new product?")
+                csv_new_prod.writerow(row)
             elif cursor.rowcount > 1:
                 logger.warning(f"Too many products with the id {sh_id}. This is an error in DB. Skipping.")
             else: # rowcount == 1
